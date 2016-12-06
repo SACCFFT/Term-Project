@@ -1,0 +1,35 @@
+Project Proposal
+My project proposal is to write a recommendation algorithm that is specifically tailored to anime. The ide came about when I was reflecting on my personal experience of being bored for and extened period of time, and hitting the 'random' button to find new shows, only to never find anything I liked. As such, I wanted build an app that would take a user's list of anime they've already watched and based on it maek recommendations of things to watch. As I did more research, I found out that recomendation algorithms are nothing new; companies such as nexflix and amazon make money off of being able to correcly guess what its users want. My goal then became to apply a content-based recommendation system via anime database api. The modules I am using consist of AniDB API for gathering the user's anime list, anime database, and getting the recommendation, Scikit for providing statistical analysis on the anime, and Django for hosting a basic website which I will use for UI
+
+Competitive Analysis
+While the concept of recommendation algorithms are widely used by major companies, the state of the matter is that they are hardly used when it comes to anime. Contrary to sites like imdb, anime databases such as AniDB are run by enthusiasts as opposed to professional. As a result, while they still strive to create the most wholesome site possible, more complicated algorithms such as a recommendation algorithm are often left out. In addition to creating an algorithm for a different audience, I wanted to have more control over the reconmendation alrorithm criteria. For example, besides just searching by tags I hope to get around to implementing factoring in things like studio, obscurity, age, and perhaps abstrac concepts such as tone. Additionally, I want to expiriment with things such as looking for clusters of tags, or groups of tags that the user often experiences together as opposed to individually. 
+
+description of files
+feature_selection_pipeline.py
+plot_ols.py
+plot_svm_anova.py
+Code samples from scikit. These are not quite eligible to be technology demonstrations, but were used to gain greater understaning of scikit
+
+project proposal.txt
+timesheet.txt
+self explanitory
+
+anime-titles.dat.gz
+anime-titles.dat.txt
+A list of all anime that can be found on AniDB with title and anime ID number. Useful for api purpouses
+
+test api login.py
+code sample that demonstrates proficicency with the AniDB api
+
+test api.py
+does nothing
+
+test scikit.py
+code sample that demonstrates use of scikit
+
+webpage(folder)
+a folder containing an elementary webapp using django
+
+Citations
+most of the code in webpage is a modification of a template	which can be found at: https://github.com/rnvarma/starter-django-project
+the scikit examples are downloaded from the scikit website

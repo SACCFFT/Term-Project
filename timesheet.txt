@@ -1,0 +1,22 @@
+1	hr learning how to parse XML
+2	hr configuring website
+2	hr integrating API into website
+2	hr Django not working??? Learned how to use virtual environemnt
+1	hr trying to import list into Django database
+
+
+
+
+
+1	hr 	Set up client with AniDB, source of API
+1	hr 	Learning how to use UDP to communicate
+4	hr	Self teaching how to use UDP in context of API (looking at other people's github, rereading documentation, etc.)
+		Includes figuring out the format in which the API recieved requests
+2	hr	Configuring and learning how to use commands specific to AniDB
+
+2	hr	(Failing to) learn Scikit
+3	hr	Reading about preexisting recommendation algorithms on the net 
+2	hr	Reading Scikit documentation
+1	hr	Programming test scikit.py
+
+A lot of the time inefficiency came from (attempting to) learn modules completely by documentation. In the case of AniDB api, I was able to refrence other preexisting clients, but trying to derive meaning from code was an extremely painful task, especially as I had no prior knowlege of any networking. In the case of scikitt the difficulty was looking for methods in scikit that would reflect methods that I wanted to use, and how to format data to use them.
