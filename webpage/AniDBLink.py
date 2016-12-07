@@ -2,7 +2,7 @@ from backend.models import*
 import socket, sys, zlib
 import threading
 import time
-import constants
+import functions
 
 CLIENT = 'saccfft'
 SERVER = 'api.anidb.net'

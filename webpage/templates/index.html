@@ -3,7 +3,19 @@
 <head>
     <title>Term Project!</title>
 
-    <!-- Compiled and minified CSS [Materialize] -->
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+	<!-- Compiled and minified CSS [Materialize] -->
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 
     <!-- Custom CSS -->
@@ -19,33 +31,55 @@
     <script src="{% static 'js/index.js' %}"></script>
 </head>
 <body>
-    <nav>
-            <div class="nav-wrapper">
-              <a href="/" class="brand-logo">Thinly Veiled Rec Thread</a>
+	<nav>
+        <div class="nav-wrapper indigo darken-3">
+              <a href="/" class="brand-logo"><div class=bar>Sek/r/it Club</div></a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="/rec">Rec Me!</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/rec"><div class=bar>Rec Me!</div></a></li>
+                <li><a href="/profile"><div class=bar>Profile</div></a></li>
+                <li><a href="/login"><div class=bar>Login</div></a></li>
               </ul>
             </div>
           </nav>
     <div class="title">{{user}}'s Watch List</div>
+	<div class="row">
+		<div class="col-sm-6 col-xs-12">
+	        <div class="card-panel transparent z-depth-5">
+	                <a href="/add/anime">
+	                    <div class="button">
+	                        Add Anime
+	                    </div>
+	                </a>
+	        </div>
+	    </div>
+		<div class="col-sm-6 col-xs-12">
+	        <div class="card-panel transparent z-depth-5">
+	            <div class="card-content">
+	                <a href="/edit/anime">
+	                    <div class="button">
+	                        Edit Anime
+	                    </div>
+	                </a>
+				</div>
+	        </div>
+	    </div>
+	</div>
     <table style="width:100%">
 		<tr>
-		  <td>Title</td>
-		  <td>Type</td>
-		  <td>Seen</td>
-		  <td>Status</td>
-		  <td>Score</td>
+		  <td><a href="/profile/title">Title</a></td>
+		  <td><a href="/profile/type">Type</a></td>
+		  <td><a href="/profile/seen">Seen</a></td>
+		  <td><a href="/profile/status">Status</a></td>
+		  <td><a href="/profile/score">Score</a></td>
 	   </tr>
       {% for anime in animeList%}
 
           <tr>
-            <td>{{anime.title}}</td>
-            <td>{{anime.type}}</td>
-            <td>{{anime.seen}}/{{anime.episodes}} seen</td>
-            <td>{{anime.status}}</td>
-            <td>{{anime.score}}</td>
+            <td><a href="/anime/{{anime.aid}}">{{anime.title}}</a></td>
+            <td><div class="plaintext">{{anime.type}}</div></td>
+            <td><div class="plaintext">{{anime.seen}}/{{anime.episodes}} seen</div></td>
+            <td><div class="plaintext">{{anime.status}}</div></td>
+            <td><div class="plaintext">{{anime.score}}</div></td>
          </tr>
      {% endfor %}
 </body>

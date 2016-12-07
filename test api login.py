@@ -29,17 +29,17 @@ print('All Systems Go')
 # sid = command[1]
 # print(sid)
 
-sid = "HK2jX"
+sid = "9D4Im"
 session = 's='+sid
-# time.sleep(5) #Max 1 request every 2 seconds
+# # time.sleep(5) #Max 1 request every 2 seconds
+# #
+# amask = 'B0A880800E0000'
 #
-amask = 'B0A880800E0000'
-
-anime = 6564 #Angel Beats!!!!
-getAnime = 'ANIME aid=6564&amask='+amask+'&'+session
-sock.sendto(getAnime, target)
-data = sock.recv(1400)
-print (data)
+# anime = 6564 #Angel Beats!!!!
+# getAnime = 'ANIME aid=6564&amask='+amask+'&'+session
+# sock.sendto(getAnime, target)
+# data = sock.recv(1400)
+# print (data)
 # #time.sleep(10)
 #
 # print 'Testo'
@@ -59,12 +59,12 @@ print (data)
 # time.sleep(10)
 
 
-# logout = 'LOGOUT '+session
-# print(logout)
-#
-# sock.sendto(logout, target)
-# data = sock.recv(1400)
-# print (data)
+logout = 'LOGOUT '+session
+print(logout)
+
+sock.sendto(logout, target)
+data = sock.recv(1400)
+print (data)
 
 
 print('Success!')

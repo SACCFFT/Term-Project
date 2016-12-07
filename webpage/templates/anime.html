@@ -1,0 +1,63 @@
+{% load staticfiles %}
+<html>
+<head>
+    <title>Term Project!</title>
+
+    <!-- Compiled and minified CSS [Materialize] -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+
+    <!-- Compiled and minified jQuery -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+    <!-- Compiled and minified JavaScript [Materialize] -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/index.js' %}"></script>
+</head>
+<body>
+	<nav>
+        <div class="nav-wrapper indigo darken-3">
+              <a href="/" class="brand-logo"><div class=bar>Sek/r/it Club</div></a>
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/rec"><div class=bar>Rec Me!</div></a></li>
+                <li><a href="/profile"><div class=bar>Profile</div></a></li>
+                <li><a href="/login"><div class=bar>Login</div></a></li>
+              </ul>
+            </div>
+          </nav>
+    <div class="title">
+		{{anime}}
+	</div>
+	<div class="col-md-12 ">
+		<div class="card-panel transparent z-depth-5">
+				<a href="http://anidb.net/perl-bin/animedb.pl?show=anime&aid={{aid}} " target="_blank">
+					<div class="button">
+						Open in AniDB
+					</div>
+				</a>
+		</div>
+	</div>
+	<div class="plaintext">
+		Type: {{type}}
+	</div>
+	<!-- <div class="plaintext">
+		Aired:{{aired}}
+	</div> -->
+	<div class="plaintext">
+		Episodes: {{episodes}}
+	</div>
+	<div class="plaintext">
+		Tags:
+		{% for tag in tags %}
+			{{tag}},
+		{% endfor %}
+	</div>
+	<div class="plaintext">
+		{{description}}
+	</div>
+</body>
+</html>

@@ -31,3 +31,4 @@ class Member(models.Model):
     prefrenceVector = models.CharField(max_length=500, default="")
     tagTotal = models.CharField(max_length=500, default="")
     IDFvector =  models.CharField(max_length=500, default="")
+    context = models.CharField(max_length=500, default="")

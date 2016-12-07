@@ -2,7 +2,7 @@ from backend.models import*
 import socket, sys, zlib
 import threading
 import time
-import constants
+import functions
 import random
 
 CLIENT = 'saccfft'
@@ -25,7 +25,7 @@ def getAnime(sid, aid, amask='b0a880800e0000', MYPORT=9334):
 def getAnimeWTitle(sid, title, amask='b0a880800e0000', MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
-	getAnime = 'ANIME atitle='+title+'&amask='+amask+'&s='+str(sid)
+	getAnime = 'ANIME aname='+title+'&amask='+amask+'&s='+str(sid)
 	sock.sendto(getAnime, target)
 	message = sock.recv(1400)
 	return message
@@ -58,24 +58,42 @@ def getRand(sid, prefrence, IDF, tolerance, amask='b0a880800e0000', MYPORT=9334)
 			return (anime, -1)
 		alltags = anime.split('|')[8]
 		alltags = alltags.split(',')
-		tags = constants.filterTags(alltags)
-		tags = constants.preprocessing(tags)[0]
-		tagVector = constants.getVector(tags)
-		affinity = constants.evaluate(tagVector, prefrence, IDF)
-	# aid = 6564
-	# getAnime = 'ANIME aid='+str(aid)+'&amask='+amask+'&s='+str(sid)
-	# sock.sendto(getAnime, target)
-	# anime = sock.recv(1400)
-	# code = anime[:3]
-	# if code != '230':
-	# 	return (anime, -1)
-	# alltags = anime.split('|')[8]
-	# alltags = alltags.split(',')
-	# tags = constants.filterTags(alltags)
-	# tags = constants.preprocessing(tags)[0]
-	# tagVector = constants.getVector(tags)
-	# affinity = constants.evaluate(tagVector, prefrence, IDF)
+		tags = functions.filterTags(alltags)
+		tags = functions.preprocessing(tags)[0]
+		tagVector = functions.getVector(tags)
+		affinity = functions.evaluate(tagVector, prefrence, IDF)
 	return (anime, affinity)
+
+def getDescription(sid, aid, MYPORT=9334):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.bind(('', MYPORT))
+	part = 0
+	description = ""
+	getDes = 'ANIMEDESC aid='+str(aid)+'&part='+str(part)+'&s='+str(sid)
+	sock.sendto(getDes, target)
+	anime = sock.recv(1400)
+	code = anime[:3]
+	if code != 233:
+		return anime
+	data = anime.split('|')
+	description += data[2]
+	maxPart = int(data[1])
+	while part < maxPart:
+		part += 1
+		getDes = 'ANIMEDESC aid='+str(aid)+'&part='+str(part)+'&s='+str(sid)
+		sock.sendto(getAnime, target)
+		anime = sock.recv(1400)
+		data = anime.split('|')
+		description += data[2]
+	return description
+
+def logout(sid, MYPORT=9334):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.bind(('', MYPORT))
+	logout = "LOGOUT s="+str(sid)
+	sock.sendto(logout, target)
+	data = sock.recv(1400)
+	return data
 
 class AniDBLink(threading.Thread):
 

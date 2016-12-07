@@ -5,9 +5,10 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 import threading
 from backend.models import *
-import constants
+import functions
 import time
 import apijazz
+import updatevectors
 
 class HomePage(View):
     def get(self, request):
@@ -19,11 +20,11 @@ class HomePage(View):
 		return render(request, 'home.html', context)
 
 class RecPage(View):
-    def get(self, request):
-		tolerance = 0.01
+    def get(self, request, url=""):
+		tolerance = 20
 		context = {}
-		prefrence = constants.stringToTag(request.user.member.prefrenceVector)
-		IDF = constants.stringToTag(request.user.member.IDFvector)
+		prefrence = functions.stringToTag(request.user.member.prefrenceVector)
+		IDF = functions.stringToTag(request.user.member.IDFvector)
 		data = apijazz.getRand(request.user.member.sid, prefrence, IDF, tolerance )
 		#anime = apijazz.getAnime(request.user.member.sid, 6564,('api.anidb.net',9000) )
 		context["full"] = data[0]
@@ -38,20 +39,52 @@ class RecPage(View):
 		context["affinity"] = data[1]
 		alltags = anime[8]
 		alltags = alltags.split(',')
-		tags = constants.filterTags(alltags)
+		tags = functions.filterTags(alltags)
 		context["tags"] = tags
-
-
+		aid = anime[0].split()[2]
+		context["description"] = apijazz.getDescription(request.user.member.sid, aid)
+		context["aid"] = aid
 		return render(request, 'rec.html', context)
 
 class ProfilePage(View):
-	def get(self, request):
+	def get(self, request, url=""):
 		animeList = Anime.objects.all()
-		playerList = []
+		if url == "type":
+			listOrder = functions.sortType(animeList)
+		elif url == "seen":
+			listOrder = functions.sortSeen(animeList)
+		elif url == "status":
+			listOrder = functions.sortStatus(animeList)
+		elif url == "score":
+			listOrder = functions.sortScore(animeList)
+		else:
+			listOrder = functions.sortAnime(animeList)
+
+
+
 		context = {}
-		context["animeList"] = animeList
+		context["animeList"] = listOrder
 		context["user"] = request.user.username
 		return render(request, 'index.html', context)
+
+class ViewAnime(View):
+	def get(self, request, url=""):
+		anime = Anime.objects.get(aid=int(url))
+		context = {}
+		context["anime"] = anime.title
+		context["type"] = anime.type
+		#context["aired"] = anime.
+		context["episodes"] = anime.episodes
+		allT = anime.allTags.split('|')
+		print allT
+		tags = functions.filterTags(allT)
+		print tags
+		context["tags"] = tags
+		description = apijazz.getDescription(request.user.member.sid, anime.aid)
+		context["description"] = description
+		context["aid"] = anime.aid
+		return render(request, 'anime.html', context)
+
 
 class LoginPage(View): #TODO: debug login later
 	def get(self, request):
@@ -84,17 +117,72 @@ class AddAnime(View):
 	def post(self, request):
 		aid = request.POST['aid']
 		title = request.POST['title']
-
-		if len(aid) > 0:
-			anime = apijazz.getAnime(request.user.member.sid, aid)
-		else:
+		status = request.POST['status']
+		seen = request.POST['seen']
+		score = request.POST['score']
+		print aid, title, status, seen, score
+		if len(aid) == 0:
 			anime = apijazz.getAnimeWTitle(request.user.member.sid, title)
+		else:
+			anime = apijazz.getAnime(request.user.member.sid, aid)
 		command = anime[:3]
 		if command != '230':
 			return HttpResponseRedirect('/error/'+ command)
+
+		if len(status) == 0: status = "Plan to Watch"
+		if len(seen) == 0: seen = 0
+		if len(score) == 0: score = 0
+
+		anime = anime.split('|')
+		aid = anime[0].split()[2]
+		title = anime[3]
+		type = anime[2]
+		episodes = anime[6]
+		alltags = anime[8]
+		tags = functions.filterTags(alltags.split(','))
+		setup = functions.preprocessing(tags)
+		vector = functions.getVector(setup[0])
+		exportVector = functions.tagToString(vector)
+		temp = Anime(aid=aid,title=title,type=type,episodes=episodes,seen=seen,
+			score=score,status=status,normalizedVector=exportVector,allTags=alltags)
+		temp.save()
+		for tagObject in tags:
+			temp.tags.add(Tag.objects.get(tagName=tagObject))
+
+		updatevectors.updateList()
+		return HttpResponseRedirect('/profile')
+
+class EditAnime(View):
+	def get(self, request, url=""):
+		anime = Anime.objects.get(aid=int(url))
 		context = {}
-		print(sid)
-		context["sid"] = sid
+		context["anime"] = anime.title
+		context["aid"] = anime.aid
+		return render(request, "editanime.html", context)
+
+	def post(self, request, url=""):
+		anime = Anime.objects.get(aid=int(url))
+		status = request.POST['status']
+		seen = request.POST['seen']
+		score = request.POST['score']
+		if len(status) != 0: anime.status = status
+		if len(seen) == 0: anime.seen = seen
+		if len(score) == 0: anime.score = score
+		anime.save()
+		return HttpResponseRedirect('/profile')
+
+class AddTags(View):
+	def get(self, request):
+		return render(request, "addtags.html")
+
+	def post(self, request):
+		tid = request.POST['tid']
+		name = request.POST['title']
+		if len(tid) == 0 or len(name) == 0:
+			return HttpResponseRedirect('/error/237')
+		tag = Tag(tid=tid,tagName=name)
+		tag.save()
+		#functions.addTag(tag)
 		return HttpResponseRedirect('/profile')
 
 class Logout(View):
@@ -102,10 +190,11 @@ class Logout(View):
 		session = request.user.member.sid
 		request.user.member.sid = -1
 
-		apijazz.logout(session)
-		context = {}
-		context["animeList"] = []
-		context["user"] = "Please log in to continue"
+		data = apijazz.logout(session)
+		code = data[:3]
+		if code != '203':
+			return HttpResponseRedirect('/error/'+ code)
+		return HttpResponseRedirect('/login')
 
 class ErrorPage(View):
 	def get(self, request, url=""):

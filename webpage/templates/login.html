@@ -3,6 +3,19 @@
 <head>
     <title>Term Project!</title>
 
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+	<!-- Compiled and minified CSS [Materialize] -->
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     <!-- Compiled and minified CSS [Materialize] -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 
@@ -20,12 +33,12 @@
 </head>
 <body>
 	<nav>
-            <div class="nav-wrapper">
-              <a href="/" class="brand-logo">Thinly Veiled Rec Thread</a>
+        <div class="nav-wrapper indigo darken-3">
+              <a href="/" class="brand-logo"><div class=bar>Sek/r/it Club</div></a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="/rec">Rec Me!</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/rec"><div class=bar>Rec Me!</div></a></li>
+                <li><a href="/profile"><div class=bar>Profile</div></a></li>
+                <li><a href="/login"><div class=bar>Login</div></a></li>
               </ul>
             </div>
           </nav>
@@ -38,9 +51,18 @@
         <label for="userid">Your username: </label>
         <input id="userid" type="text" name="userid" value="">
         <label for="pass">Your password: </label>
-        <input id="pass" type="text" name="pass" value="">
+        <input id="pass" type="password" name="pass" value="">
         <input type="submit" name="Login">
 
     </form>
+	<div class="col-md-3 ">
+		<div class="card-panel transparent z-depth-5">
+				<a href="/logout">
+					<div class="button">
+						Click here to logout
+					</div>
+				</a>
+		</div>
+	</div>
 </body>
 </html>

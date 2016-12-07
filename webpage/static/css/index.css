@@ -1,5 +1,43 @@
 .title {
     font-size: 200%;
     font-weight: bold;
+    color: blue;
+	padding: 20px
+}
+
+.error {
+	font-size: 200%;
+    font-weight: bold;
     color: red;
+}
+
+.panel {
+	background-color: white;
+	padding: 20px;
+}
+
+.button {
+	font-size: 150%;
+	color: blue;
+}
+
+.plaintext {
+	color: #9400D3;
+	padding: 20px;
+	font-size: 16;
+}
+
+.bar {
+	color: #9932CC;
+}
+
+.transparent {
+	background-color: white;
+}
+
+body {
+	background-color: black;
+    background-image: url("custom/1424726391270.jpg");
+	background-size: 100% 100%;
+	background-attachment: fixed;
 }

@@ -15,7 +15,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-import constants
+import functions
 
 #settings.configure()
 
@@ -54,7 +54,7 @@ listSetup = AniDBLink() #Set up Anidb Link
 # logStatus.wait()
 
 # #If already logged in, can hardcode SID to avoid logging in again
-sid = "qe5yC"
+sid = "tkqLM"
 listSetup.alreadyLogged(sid)
 code = 200
 
@@ -93,10 +93,10 @@ else:
 		aid = int(data[0].split()[2])
 		print aid
 		alltags = data[1].split(',')
-		tags = constants.filterTags(alltags)
-		temp = constants.preprocessing(tags)
-		vector = constants.getVector(temp[0])
-		exportVector = constants.tagToString(vector)
+		tags = functions.filterTags(alltags)
+		temp = functions.preprocessing(tags)
+		vector = functions.getVector(temp[0])
+		exportVector = functions.tagToString(vector)
 		totalFreq += [temp]
 		dbtags += [vector]
 		dblikes += [score-6] #TODO: Refine like/dislike weighting
@@ -109,8 +109,9 @@ else:
 		else:
 			dblikes += [0]
 
+		exportTags = functions.tagToString(alltags)
 		temp = Anime(aid=aid,title=title,type=type,episodes=episodes,seen=seen,
-			score=score,status=status,normalizedVector=exportVector,allTags=alltags)
+			score=score,status=status,normalizedVector=exportVector,allTags=exportTags)
 		temp.save()
 		for tagObject in tags:
 			temp.tags.add(Tag.objects.get(tagName=tagObject))
@@ -121,16 +122,16 @@ else:
 	u = User.objects.get(username='SACCFFT')
 	print avg
 	u.member.average = avg
-	prefrences = constants.userVector(dbtags, dblikes)
+	prefrences = functions.userVector(dbtags, dblikes)
 	print prefrences
-	u.member.prefrenceVector = constants.tagToString(prefrences)
+	u.member.prefrenceVector = functions.tagToString(prefrences)
 	print
-	tagFrequency = constants.tagFreq(totalFreq)
+	tagFrequency = functions.tagFreq(totalFreq)
 	print tagFrequency
-	u.member.tagTotal = constants.tagToString(tagFrequency)
-	IDFvector = constants.IDFvector(tagFrequency)
+	u.member.tagTotal = functions.tagToString(tagFrequency)
+	IDFvector = functions.IDFvector(tagFrequency, len(listedAnime)-len(failedAnime))
 	print IDFvector
-	u.member.IDFvector = constants.tagToString(IDFvector, len(listedAnime)-len(failedAnime))
+	u.member.IDFvector = functions.tagToString(IDFvector)
 
 	u.member.save()
 

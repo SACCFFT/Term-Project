@@ -21,10 +21,15 @@ from app.views import *
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomePage.as_view()),
-	url(r'^profile/$', ProfilePage.as_view()),
+	url(r'^profile/([a-zA-Z0-9_.-]+$)', ProfilePage.as_view()),
+	url(r'^profile/', ProfilePage.as_view()),
     url(r'^rec/$', RecPage.as_view()),
+	url(r'^rec/([a-zA-Z0-9_.-]+$)', RecPage.as_view()),
     url(r'^login/', LoginPage.as_view()),
+	url(r'^logout/', Logout.as_view()),
 	url(r'^error/([a-zA-Z0-9_.-]+$)', ErrorPage.as_view()),
+	url(r'^anime/([a-zA-Z0-9_.-]+$)', ViewAnime.as_view()),
 	url(r'^add/anime$', AddAnime.as_view()),
+	url(r'^edit/anime/([a-zA-Z0-9_.-]+$)', EditAnime.as_view()),
 	url(r'^add/tags$', AddTags.as_view())
 ]

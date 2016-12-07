@@ -20,12 +20,12 @@
 </head>
 <body>
 	<nav>
-            <div class="nav-wrapper">
-              <a href="/" class="brand-logo">Thinly Veiled Rec Thread</a>
+        <div class="nav-wrapper indigo darken-3">
+              <a href="/" class="brand-logo"><div class=bar>Sek/r/it Club</div></a>
               <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="/rec">Rec Me!</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/rec"><div class=bar>Rec Me!</div></a></li>
+                <li><a href="/profile"><div class=bar>Profile</div></a></li>
+                <li><a href="/login"><div class=bar>Login</div></a></li>
               </ul>
             </div>
           </nav>
@@ -33,12 +33,18 @@
         Enter either the anime's title(exact) or anime ID
     </div>
 
-    <form action="/login/hold" method="post">
+    <form action="/add/anime" method="post">
         {% csrf_token %}
         <label for="aid">aid: </label>
         <input id="aid" type="text" name="aid" value="">
         <label for="title">Title: </label>
         <input id="titla" type="text" name="title" value="">
+		<label for="status">Status: </label>
+        <input id="status" type="text" name="status" value="">
+		<label for="seen">Episodes Seen: </label>
+        <input id="seen" type="text" name="seen" value="">
+		<label for="score">Score: </label>
+        <input id="score" type="text" name="score" value="">
         <input type="submit" name="Login">
 
     </form>
