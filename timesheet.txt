@@ -15,8 +15,27 @@
 2	hr	Configuring and learning how to use commands specific to AniDB
 
 2	hr	(Failing to) learn Scikit
-3	hr	Reading about preexisting recommendation algorithms on the net 
+3	hr	Reading about preexisting recommendation algorithms on the net
 2	hr	Reading Scikit documentation
 1	hr	Programming test scikit.py
 
 A lot of the time inefficiency came from (attempting to) learn modules completely by documentation. In the case of AniDB api, I was able to refrence other preexisting clients, but trying to derive meaning from code was an extremely painful task, especially as I had no prior knowlege of any networking. In the case of scikitt the difficulty was looking for methods in scikit that would reflect methods that I wanted to use, and how to format data to use them.
+
+
+
+2	hr creating AniDB Link Class
+3	hr Understanding multithreading
+4	hr Testing and debugging get list.py
+2	hr debugging login/api in general in Django
+1	hr Apparently multithreadding hates django, multithreadding abandoned ;_;
+3	hr Fixing get list.py
+2	hr writing/debugging updatevector.py
+1	hr adapting apijazz.py
+2	hr writing profile/list + html
+1	hr writing anime + htmp
+6	hr writing/debugging recommendation algorithm
+1	hr add anime/edit anime
+3	hr CSS FUN!!!! (Spent more time than I should have, oops)
+2	hr more debugging apijazz.py
+2	hr implementing recommendation algorithm extension
+2	hr misc debugging

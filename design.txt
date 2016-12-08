@@ -1,0 +1,22 @@
+My project idea stems from a long history of procrastination. Many nights in search of entertainment, I would go to a manga or anime site and spend literal hours hitting random in hopes that I would find something good to watch/read. I have always had the idea that only if you were able to specify parameters in which to find a random anime to watch (because, you know, looking through a list is too hard). When this term project came about, I saw my opportunity to do good, and I seized it.
+
+As it turns out, recommendation algorithms are fairly complex in this day and age, and for good reason. These algorithms make money. When Amazon successfully recommends something, they make a sale and make money. When Netfilx gives you something good to watch, you use their services. However, these algorithms are not coded in the context I want (anime/manga), and don't work in the way I want. In this project, I take my own approach to making and implementing a recommendation algorithm that I would personally want to use.
+
+The algorithm used is a content based recommendation algorithm. The way it works is by multiplying 3 vectors together; one for the object, one for the user, and one for the IDF, the algorithm is able to predict how much the user would like the anime. Then, I add a personal twist by predicting a tag that the user often uses, and ask wether they would like to see more or less of this tag, and alter my results accordingly.
+
+Since I was using an API for the first time, and a complex one at that, I referenced many other projects and how they implemented the API
+
+By the way do note that if it ever feels slow, the API has a 1 request per 2 second limit, which often makes the rec page take a while.
+
+Warning: Run get list.py sparingly. Not only does it take a long time bc 1 request every 2 seconds, I may get banned.
+
+Credits:
+Django template used:
+https://github.com/rnvarma/starter-django-project
+
+Background image:
+https://cs.sankakucomplex.com/data/12/a1/12a1c81c6d6d05206f72e08582a0ffad.jpg?352056
+
+API used as reference: (AniDB Link class, despite having same name, was written completely from scratch)
+https://github.com/lad1337/adba
+https://github.com/winterbird-code/adbb

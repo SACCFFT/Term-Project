@@ -190,7 +190,7 @@ class AddAnime(View):
 			temp.tags.add(Tag.objects.get(tagName=tagObject))
 
 		updatevectors.updateList()
-		return HttpResponseRedirect('/anime/aid')
+		return HttpResponseRedirect('/anime/'+aid)
 
 # Select an anime to edit
 class SelectEdit(View):
