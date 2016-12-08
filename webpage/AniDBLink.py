@@ -12,6 +12,8 @@ CLIENTVER = 1
 PROTOVER = 3
 
 target = (SERVER, PORT)
+
+# A class that connects to the AniDB database and retrieves information
 class AniDBLink(threading.Thread):
 
 	def __init__(self):
@@ -33,8 +35,6 @@ class AniDBLink(threading.Thread):
 		self.message = ""
 		self.flag = None
 		self.sid = -1
-
-
 
 		threading.Thread.__init__(self)
 		print "setup complete"
@@ -64,28 +64,32 @@ class AniDBLink(threading.Thread):
 	def getData(self):
 		return self.message
 
+	# Logs user into AniDB
 	def login(self, user, password):
 		print 'T2 Login Requested'
 		if not self.runListener: #If listener is not running, restarts it
 			self.runListener = True
 			self.run()
 
-		login = ('AUTH user='+ user + '&pass=' + password + '&protover=3&client=saccfft&clientver=1')
+		login = ('AUTH user='+user+'&pass='+password+'&protover=3&client=saccfft&clientver=1')
 		login += user
 		self.sock.sendto(login, self.target)
 		self.message = self.sock.recv(1400)
 		print "T2 Login request sent"
 		return self.message
 
+	# If the user is already logged, can hardcode session key here
 	def alreadyLogged(self,sid):
 		self.sid = sid
 
+	# Logs user out of AniDB
 	def logout(self):
 		logout = 'LOGOUT s='+self.sid
 		self.sock.sendto(logout, self.target)
 		self.runListener = False
 		self.sid = -1
 
+	# Gets an anime from AniDB
 	def getAnime(self, title, amask='b0a880800e0000'):
 		try:
 			getAnime = 'ANIME aname='+title+'&amask='+amask+'&s='+str(self.sid)
@@ -96,14 +100,12 @@ class AniDBLink(threading.Thread):
 			print "Can not send"
 			return "330 NO SUCH ANIME"
 
-
-
-
-
+	# Gets a random unwatched anime
 	def getRand(self):
 		random = 'RANDOMANIME type=2&s='+self.sid
 		self.sock.sendto(random, self.target)
 
+	# Returns session ID
 	def getsid(self):
 		return self.sid
 

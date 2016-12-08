@@ -32,7 +32,7 @@
     <div class="title">
 		{{anime}}
 	</div>
-	<div class="col-md-12 ">
+	<div class="col-md-6">
 		<div class="card-panel transparent z-depth-5">
 				<a href="http://anidb.net/perl-bin/animedb.pl?show=anime&aid={{aid}} " target="_blank">
 					<div class="button">
@@ -51,6 +51,12 @@
 		Episodes: {{episodes}}
 	</div>
 	<div class="plaintext">
+		Your Score: {{score}}
+	</div>
+	<div class="plaintext">
+		Status: {{status}}
+	</div>
+	<div class="plaintext">
 		Tags:
 		{% for tag in tags %}
 			{{tag}},
@@ -58,6 +64,17 @@
 	</div>
 	<div class="plaintext">
 		{{description}}
+	</div>
+	<div class="col-md-6">
+		<div class="card-panel transparent z-depth-5">
+			<div class="card-content">
+				<a href="/edit/anime/{{aid}}">
+					<div class="button">
+						Edit Entry
+					</div>
+				</a>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

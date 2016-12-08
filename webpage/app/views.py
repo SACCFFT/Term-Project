@@ -9,7 +9,9 @@ import functions
 import time
 import apijazz
 import updatevectors
+from decimal import *
 
+# Home page
 class HomePage(View):
     def get(self, request):
 		animeList = Anime.objects.all()
@@ -19,19 +21,41 @@ class HomePage(View):
 		context["user"] = request.user.username
 		return render(request, 'home.html', context)
 
+# Recommendation Page
 class RecPage(View):
     def get(self, request, url=""):
-		tolerance = 20
+		u = request.user.member
+		tol = u.tolerance
+		cache = u.context.split('|')
+		print "Context:"
+		print cache
+		if len(url) > 0:
+			print url
+			if "same" in url:
+				if url[0].equals('+'):
+					tol *= Decimal(1.1)
+				else:
+					tol *= Decimal(.9)
+				u.tolerance = tol
+				u.save()
+			else:
+				cache += [url]
+				print cache
+				update = reduce(lambda a,b: a+'|'+b, cache[-5:])
+				print update
+				u.context = update
+				u.save()
+
 		context = {}
-		prefrence = functions.stringToTag(request.user.member.prefrenceVector)
-		IDF = functions.stringToTag(request.user.member.IDFvector)
-		data = apijazz.getRand(request.user.member.sid, prefrence, IDF, tolerance )
-		#anime = apijazz.getAnime(request.user.member.sid, 6564,('api.anidb.net',9000) )
+		prefrence = functions.stringToTag(u.prefrenceVector)
+		IDF = functions.stringToTag(u.IDFvector)
+		data = apijazz.getRand(u.sid, prefrence, IDF, tol, cache=cache)
 		context["full"] = data[0]
 		anime = data[0].split('|')
 		code = anime[0][:3]
 		if code != '230':
 			return HttpResponseRedirect('/error/'+ code)
+
 		context["anime"] = anime[3]
 		context["type"] = anime[2]
 		context["aired"] = anime[1]
@@ -42,10 +66,21 @@ class RecPage(View):
 		tags = functions.filterTags(alltags)
 		context["tags"] = tags
 		aid = anime[0].split()[2]
-		context["description"] = apijazz.getDescription(request.user.member.sid, aid)
+		context["description"] = apijazz.getDescription(u.sid, aid)
 		context["aid"] = aid
+
+		cache = u.context
+		possibilities = functions.filterRelevant(tags, prefrence, cache)
+		select = possibilities[0]
+		prob = possibilities[1]
+		if prob[0] == 0:
+			context["learn"] = "same"
+		else:
+			context["learn"] = functions.randSelection(select, prob)[0]
+
 		return render(request, 'rec.html', context)
 
+# User's anime list
 class ProfilePage(View):
 	def get(self, request, url=""):
 		animeList = Anime.objects.all()
@@ -67,6 +102,7 @@ class ProfilePage(View):
 		context["user"] = request.user.username
 		return render(request, 'index.html', context)
 
+# Displays information on anime
 class ViewAnime(View):
 	def get(self, request, url=""):
 		anime = Anime.objects.get(aid=int(url))
@@ -76,16 +112,18 @@ class ViewAnime(View):
 		#context["aired"] = anime.
 		context["episodes"] = anime.episodes
 		allT = anime.allTags.split('|')
-		print allT
+		#print allT
 		tags = functions.filterTags(allT)
-		print tags
+		#print tags
 		context["tags"] = tags
 		description = apijazz.getDescription(request.user.member.sid, anime.aid)
 		context["description"] = description
 		context["aid"] = anime.aid
+		context["score"] = anime.score
+		context["status"] = anime.status
 		return render(request, 'anime.html', context)
 
-
+# Login to API page
 class LoginPage(View): #TODO: debug login later
 	def get(self, request):
 		context = {}
@@ -103,6 +141,7 @@ class LoginPage(View): #TODO: debug login later
 		print(command)
 		sid = command[1]
 		request.user.member.sid = sid
+		request.user.member.context = ""
 		request.user.member.save()
 		user = authenticate(username=username, password=password)
 		context = {}
@@ -110,6 +149,7 @@ class LoginPage(View): #TODO: debug login later
 		context["sid"] = sid
 		return render(request, "login.html", context)
 
+# Add an anime to your DB page
 class AddAnime(View):
 	def get(self, request):
 		return render(request, "addanime.html")
@@ -150,11 +190,27 @@ class AddAnime(View):
 			temp.tags.add(Tag.objects.get(tagName=tagObject))
 
 		updatevectors.updateList()
-		return HttpResponseRedirect('/profile')
+		return HttpResponseRedirect('/anime/aid')
 
+# Select an anime to edit
+class SelectEdit(View):
+	def get(self, request):
+		return render(request, "selectanime.html")
+
+	def post(self, request):
+		aid = request.POST['aid']
+		title = request.POST['title']
+		if len(aid) == 0:
+			aid = Anime.objects.get(title=title)
+		return HttpResponseRedirect('/edit/anime/'+aid)
+
+# Edit an anime
 class EditAnime(View):
 	def get(self, request, url=""):
-		anime = Anime.objects.get(aid=int(url))
+		try:
+			anime = Anime.objects.get(aid=int(url))
+		except:
+			return HttpResponseRedirect('/error/330')
 		context = {}
 		context["anime"] = anime.title
 		context["aid"] = anime.aid
@@ -166,10 +222,10 @@ class EditAnime(View):
 		seen = request.POST['seen']
 		score = request.POST['score']
 		if len(status) != 0: anime.status = status
-		if len(seen) == 0: anime.seen = seen
-		if len(score) == 0: anime.score = score
+		if len(seen) != 0: anime.seen = int(seen)
+		if len(score) != 0: anime.score = Decimal(score)
 		anime.save()
-		return HttpResponseRedirect('/profile')
+		return HttpResponseRedirect('/anime/'+url)
 
 class AddTags(View):
 	def get(self, request):
@@ -185,6 +241,7 @@ class AddTags(View):
 		#functions.addTag(tag)
 		return HttpResponseRedirect('/profile')
 
+# Not a page, but logs the user out
 class Logout(View):
 	def get(self, request):
 		session = request.user.member.sid
@@ -196,6 +253,7 @@ class Logout(View):
 			return HttpResponseRedirect('/error/'+ code)
 		return HttpResponseRedirect('/login')
 
+# Occurs AniDB returns an error
 class ErrorPage(View):
 	def get(self, request, url=""):
 		context = {}

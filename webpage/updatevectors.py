@@ -1,3 +1,7 @@
+#################################################################
+# Updates all of a user's data based on anime already in the list
+################################################################
+
 # Gets anime list from an XML file
 import os
 # This must be executed before the import below

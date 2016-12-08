@@ -1,3 +1,7 @@
+###############################################
+# Initializes database from exported anime list
+###############################################
+
 # Gets anime list from an XML file
 import os
 # This must be executed before the import below
@@ -34,7 +38,7 @@ PROTOVER = 3
 target = (SERVER, PORT)
 
 username = 'SACCFFT'
-password = 'CheeseCakeSteak'
+password = '112TermProject'
 tagamask = '800000000e0000'
 
 avg = 0
@@ -46,15 +50,15 @@ totalFreq = []
 
 print "Starting..."
 listSetup = AniDBLink() #Set up Anidb Link
-#listSetup.start()
+listSetup.start()
 
-# logStatus = threading.Event() #Tries to login
-# listSetup.setFlag(logStatus)
-# data = listSetup.login(username, password)
-# logStatus.wait()
+logStatus = threading.Event() #Tries to login
+listSetup.setFlag(logStatus)
+data = listSetup.login(username, password)
+logStatus.wait()
 
 # #If already logged in, can hardcode SID to avoid logging in again
-sid = "tkqLM"
+# sid = "tkqLM"
 listSetup.alreadyLogged(sid)
 code = 200
 

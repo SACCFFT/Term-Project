@@ -4,6 +4,7 @@ import threading
 import time
 import functions
 import random
+from decimal import *
 
 CLIENT = 'saccfft'
 SERVER = 'api.anidb.net'
@@ -14,6 +15,7 @@ PROTOVER = 3
 
 target = (SERVER, PORT)
 
+# Retrieves an anime based on its anime ID
 def getAnime(sid, aid, amask='b0a880800e0000', MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
@@ -22,6 +24,7 @@ def getAnime(sid, aid, amask='b0a880800e0000', MYPORT=9334):
 	message = sock.recv(1400)
 	return message
 
+# Retrieves an anime based on it's title
 def getAnimeWTitle(sid, title, amask='b0a880800e0000', MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
@@ -30,6 +33,7 @@ def getAnimeWTitle(sid, title, amask='b0a880800e0000', MYPORT=9334):
 	message = sock.recv(1400)
 	return message
 
+# Logs a user in to AniDB via the api
 def login( user, password):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
@@ -38,32 +42,59 @@ def login( user, password):
 	sock.sendto(login, target)
 	message = sock.recv(1400)
 	print message
-	print "T2 Login request sent"
+	print "Login request sent"
 	return message
 
-def getRand(sid, prefrence, IDF, tolerance, amask='b0a880800e0000', MYPORT=9334):
+# Keeps getting random anime from AniDB's database until it returns one in which
+# the affinity exceeds the tolerance level
+def getRand(sid, prefrence, IDF, tolerance, cache=[], amask='b0a880800e0000', MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
 	allAnime = open('foo.txt').read().splitlines()
 	affinity = -1
 	while affinity < tolerance:
 		time.sleep(2)
-		aid = random.choice(allAnime).split('|')[0]
-		print aid
+		get = random.choice(allAnime).split('|')
+		aid = get[0]
+		title = get[3]
+		# print aid, title
 		getAnime = 'ANIME aid='+str(aid)+'&amask='+amask+'&s='+str(sid)
 		sock.sendto(getAnime, target)
 		anime = sock.recv(1400)
 		code = anime[:3]
 		if code != '230':
 			return (anime, -1)
+
 		alltags = anime.split('|')[8]
 		alltags = alltags.split(',')
 		tags = functions.filterTags(alltags)
 		tags = functions.preprocessing(tags)[0]
 		tagVector = functions.getVector(tags)
 		affinity = functions.evaluate(tagVector, prefrence, IDF)
+		# print affinity
+		# print cache
+
+		for pref in cache:
+			# print pref
+			if len(pref) < 2:
+				continue
+			tag = pref[1:]
+			add = False
+			if '+'in pref:
+				if tag in alltags:
+					add = True
+			else: # If minus
+				if tag not in alltags:
+					add = True
+
+			if add:
+				affinity *= Decimal(1.1)
+			else:
+				affinity *= Decimal(.9)
+			# print affinity
 	return (anime, affinity)
 
+# Gets the description of a specified anime
 def getDescription(sid, aid, MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
@@ -73,20 +104,22 @@ def getDescription(sid, aid, MYPORT=9334):
 	sock.sendto(getDes, target)
 	anime = sock.recv(1400)
 	code = anime[:3]
-	if code != 233:
+	if code != "233":
 		return anime
+
 	data = anime.split('|')
 	description += data[2]
 	maxPart = int(data[1])
 	while part < maxPart:
 		part += 1
 		getDes = 'ANIMEDESC aid='+str(aid)+'&part='+str(part)+'&s='+str(sid)
-		sock.sendto(getAnime, target)
+		sock.sendto(getDes, target)
 		anime = sock.recv(1400)
 		data = anime.split('|')
 		description += data[2]
-	return description
+	return functions.filterDescription(description)
 
+# Logs a user out of AniDB
 def logout(sid, MYPORT=9334):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(('', MYPORT))
@@ -95,6 +128,7 @@ def logout(sid, MYPORT=9334):
 	data = sock.recv(1400)
 	return data
 
+# An attempt to create an API link class and use multithreading for efficiency
 class AniDBLink(threading.Thread):
 
 	def __init__(self):

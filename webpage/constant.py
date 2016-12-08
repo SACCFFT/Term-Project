@@ -1,3 +1,5 @@
+#List of tags used through the database
+
 global Taglist
 Taglist = [
 		"action",

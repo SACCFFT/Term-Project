@@ -6,6 +6,7 @@ import datetime
 
 # Create your models here.
 
+
 class Tag(models.Model):
     tid = models.IntegerField()
     tagName = models.CharField(max_length=200, default="")
@@ -32,3 +33,4 @@ class Member(models.Model):
     tagTotal = models.CharField(max_length=500, default="")
     IDFvector =  models.CharField(max_length=500, default="")
     context = models.CharField(max_length=500, default="")
+    tolerance = models.DecimalField(max_digits=15, decimal_places=10, default=20)
